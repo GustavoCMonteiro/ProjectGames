@@ -1,8 +1,16 @@
 {
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "src": "api/steam-search.js",
+      "use": "@vercel/node"
     }
-  ]
+  ],
+  "routes": [
+    {
+      "src": "/api/steam-search",
+      "dest": "/api/steam-search.js"
+    }
+  ],
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
