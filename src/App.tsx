@@ -1,5 +1,11 @@
+import SteamSearch from "./Components/SteamSearch/SteamSearch";
+
 function App() {
-  return <div>app</div>;
+  return (
+    <div>
+      <SteamSearch />
+    </div>
+  );
 }
 
 export default App;
