@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
-import { Game } from "./Interface";
+import { Game } from "../../interfaces/GameList";
+import { GameDetail } from "../../interfaces/GameDetail";
 
-const SteamSearch = () => {
+interface SteamSearchProps {
+  setSelectedGame: React.Dispatch<React.SetStateAction<GameDetail | undefined>>;
+}
+
+const SteamSearch = ({ setSelectedGame }: SteamSearchProps) => {
   const [query, setQuery] = useState("");
-  const [games, setGames] = useState<Game[]>([]);
+  const [gamesList, setGamesList] = useState<Game[]>([]);
 
   useEffect(() => {
     if (query.length < 3) {
-      setGames([]);
+      setGamesList([]);
       return;
     }
 
@@ -16,27 +21,38 @@ const SteamSearch = () => {
       try {
         const response = await fetch(`${URL}steam-search?q=${query}`);
         const data = await response.json();
-
         if (data.items) {
           const gameList = data.items.map((game: Game) => ({
             id: game.id,
             name: game.name,
             tiny_image: game.tiny_image,
           }));
-          setGames(gameList);
+          setGamesList(gameList);
         }
       } catch (error) {
         console.error("Erro ao buscar jogos:", error);
       }
     };
 
-    const debounce = setTimeout(fetchGames, 500); // Debounce de 500ms
+    const debounce = setTimeout(fetchGames, 500);
 
     return () => clearTimeout(debounce);
   }, [query]);
 
+  const fetchGameDetails = async (appid: number) => {
+    setQuery("");
+    const URL = import.meta.env.VITE_STEAM_SEARCH_URL;
+    try {
+      const response = await fetch(`${URL}steam-search?appid=${appid}`);
+      const data = await response.json();
+      setSelectedGame(data[appid]);
+    } catch (error) {
+      console.error("Erro ao buscar detalhes do jogo:", error);
+    }
+  };
+
   return (
-    <div className="max-w-lg mx-auto p-4">
+    <div className="relative max-w-lg mx-auto p-4">
       <input
         type="text"
         value={query}
@@ -45,13 +61,13 @@ const SteamSearch = () => {
         className="w-full p-2 border border-gray-300 rounded"
       />
 
-      {games.length > 0 && (
-        <ul className="mt-2 border border-gray-200 rounded shadow">
-          {games.map((game) => (
+      {gamesList.length > 0 && (
+        <ul className="absolute top-16 z-50">
+          {gamesList.map((game) => (
             <li
               key={game.id}
               className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
-              onClick={() => {}}
+              onClick={() => fetchGameDetails(game.id)}
             >
               <img
                 src={game.tiny_image}
