@@ -45,7 +45,7 @@ const SteamSearch = ({ setSelectedGame }: SteamSearchProps) => {
     try {
       const response = await fetch(`${URL}steam-search?appid=${appid}`);
       const data = await response.json();
-      setSelectedGame(data[appid]);
+      setSelectedGame(data[appid].data);
     } catch (error) {
       console.error("Erro ao buscar detalhes do jogo:", error);
     }

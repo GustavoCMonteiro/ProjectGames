@@ -1,3 +1,4 @@
+import Accordion from "../../Components/Accordion/Accordion";
 import { GameDetail } from "../../interfaces/GameDetail";
 
 interface GameProps {
@@ -6,7 +7,14 @@ interface GameProps {
 
 const Game = ({ game }: GameProps) => {
   console.log(game);
-  return <div>Game</div>;
+  if (!game) return <div>Carregando...</div>;
+  return (
+    <div>
+      <Accordion title={game.name}>
+        <p>{game?.short_description}</p>
+      </Accordion>
+    </div>
+  );
 };
 
 export default Game;
